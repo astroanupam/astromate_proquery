@@ -1,0 +1,20 @@
+ASTROMATE - third-party notices and data sources
+=================================================
+No third-party code libraries are bundled: the app is plain HTML, CSS and JavaScript.
+
+Algorithms and data used (formulas and public data, implemented from the published descriptions)
+ - Jean Meeus, "Astronomical Algorithms" (2nd ed.): Sun position, lunar longitude series, nutation, mean and true lunar node, sidereal time.
+ - E. M. Standish / NASA JPL Solar System Dynamics: "Keplerian Elements for Approximate Positions of the Major Planets" (Mercury to Saturn).
+ - NASA/JPL Horizons system (ssd.jpl.nasa.gov): geocentric positions used to fit the Jupiter and Saturn correction table (am-ephem-corr.js, 1900-2100)
+   and as the reference values of the accuracy tests (am-testdata.js). Public data of the U.S. Government.
+ - U.S. Naval Observatory: observed Delta-T values 2005-2026 (maia.usno.navy.mil). Espenak and Meeus polynomials for other years.
+ - Lahiri (Chitrapaksha) ayanamsha as defined by the Indian Calendar Reform Committee (23 deg 15 min 00.658 sec at 1956-03-21); Krishnamurti, Raman and
+   Fagan-Bradley ayanamsha values from their published epoch definitions.
+ - IANA time zone database, through the browser's Intl API (historical offsets and daylight saving).
+ - Vedic astrology conventions (Parashari): as set out in the course canon used for this project.
+
+Optional online service (only when the user presses "Search online" in the place selector)
+ - Open-Meteo Geocoding API (https://open-meteo.com/en/docs/geocoding-api), data derived from GeoNames (CC BY 4.0). Only the typed place name is sent.
+   Open-Meteo's free service is for non-commercial use; check their terms before commercial use.
+
+Not used: Swiss Ephemeris (AGPL / commercial licence). See docs/SERVER-EDITION.md for the licensing note.

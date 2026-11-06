@@ -1,0 +1,51 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>ASTROMATE test suite</title>
+<style>
+  body { font-family: system-ui, "Segoe UI", sans-serif; background: #08102a; color: #eef0f8; margin: 0; padding: 16px; line-height: 1.45; }
+  h1 { font-size: 1.25rem; letter-spacing: .12em; margin: 0 0 4px; } .muted { color: #a9b3d1; font-size: .85rem; }
+  .sum { margin: 14px 0; padding: 12px 14px; border-radius: 12px; border: 1px solid rgba(214,168,74,.4); background: #111e44; font-weight: 700; }
+  .sum.ok { border-color: #3ecf8e; } .sum.bad { border-color: #ff6b6b; }
+  details { border: 1px solid rgba(255,255,255,.1); border-radius: 10px; margin: 8px 0; background: rgba(255,255,255,.03); }
+  summary { cursor: pointer; padding: 9px 12px; font-weight: 700; } .p { color: #3ecf8e; } .f { color: #ff6b6b; }
+  ul { list-style: none; margin: 0; padding: 0 12px 10px; } li { padding: 3px 0; font-size: .86rem; border-top: 1px solid rgba(255,255,255,.06); } li .m { display: block; color: #ffb0b0; font-size: .8rem; margin-left: 18px; } li .n { color: #a9b3d1; font-size: .78rem; margin-left: 18px; display: block; }
+  button { background: #d6a84a; color: #231703; border: 0; padding: 9px 16px; border-radius: 10px; font-weight: 800; cursor: pointer; }
+</style>
+</head>
+<body>
+<h1>ASTROMATE QUALITY-ASSURANCE SUITE</h1>
+<div class="muted" id="env"></div>
+<div class="sum" id="sum">Running...</div>
+<p><button id="again">Run again</button></p>
+<div id="out"></div>
+<script src="am-core.js"></script>
+<script src="am-ephem.js"></script>
+<script src="am-ephem-corr.js"></script>
+<script src="am-vedic.js"></script>
+<script src="am-rules.js"></script>
+<script src="am-cities.js"></script>
+<script src="am-sheets.js"></script>
+<script src="am-predict.js"></script>
+<script src="am-store.js"></script>
+<script src="am-bank.js"></script>
+<script src="am-testdata.js"></script>
+<script src="am-tests.js"></script>
+<script>
+(function () {
+  const out = document.getElementById('out'); const sum = document.getElementById('sum');
+  document.getElementById('env').textContent = 'App ' + AM.APP_VERSION + ' - engine ' + AM.ENGINE_VERSION + ' - rule set ' + AM.rules.ref().version + ' (' + AM.rules.ref().fingerprint + ') - secure context ' + isSecureContext + ' - ' + navigator.userAgent.slice(0, 90);
+  const esc = (s) => String(s).replace(/[&<>]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;' }[c]));
+  function draw(res, partial) {
+    const groups = res.groups.concat(partial ? [partial] : []);
+    out.innerHTML = groups.map((g) => { const bad = g.tests.filter((t) => t.status === 'fail').length; return '<details ' + (bad ? 'open' : '') + '><summary class="' + (bad ? 'f' : 'p') + '">' + (bad ? '✗ ' : '✓ ') + esc(g.name) + ' <span class="muted">(' + g.tests.length + ' tests' + (bad ? ', ' + bad + ' failed' : '') + ')</span></summary><ul>' + g.tests.map((t) => '<li><span class="' + (t.status === 'pass' ? 'p' : 'f') + '">' + (t.status === 'pass' ? '✓' : '✗') + '</span> ' + esc(t.name) + ' <span class="muted">' + t.ms + ' ms</span>' + (t.message ? '<span class="m">' + esc(t.message) + '</span>' : '') + (t.note ? '<span class="n">' + esc(t.note) + '</span>' : '') + '</li>').join('') + '</ul></details>'; }).join('');
+    sum.textContent = 'Passed ' + res.passed + ' - Failed ' + res.failed;
+  }
+  async function go() { sum.className = 'sum'; sum.textContent = 'Running...'; const r = await AM.tests.runAll(draw); draw(r); sum.className = 'sum ' + (r.failed ? 'bad' : 'ok'); sum.textContent = (r.failed ? 'FAILED' : 'ALL PASSED') + ' - ' + r.passed + ' passed, ' + r.failed + ' failed (' + Math.round((r.finishedAt - r.startedAt) / 100) / 10 + ' s)'; }
+  document.getElementById('again').onclick = go; go();
+})();
+</script>
+</body>
+</html>
